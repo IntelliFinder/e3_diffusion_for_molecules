@@ -3,7 +3,7 @@ from torch.distributions.categorical import Categorical
 
 import numpy as np
 from egnn.models import EGNN_dynamics_QM9
-from models import EGNN
+from egnn.mc_egnn import EGNN
 
 
 from equivariant_diffusion.en_diffusion import EnVariationalDiffusion
