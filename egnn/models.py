@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from egnn.egnn_new import EGNN, GNN
+from egnn.mc_egnn import MC_EGNN
 from equivariant_diffusion.utils import remove_mean, remove_mean_with_mask
 import numpy as np
 
