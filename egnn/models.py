@@ -22,6 +22,11 @@ class EGNN_dynamics_QM9(nn.Module):
                 normalization_factor=normalization_factor,
                 aggregation_method=aggregation_method)
             self.in_node_nf = in_node_nf
+        elif mode == 'mc_egnn_dynamics':
+            self.egnn = MC_EGNN(in_node_nf=in_node_nf + context_node_nf, in_edge_nf=1, hidden_edge_nf=hidden_nf, hidden_node_nf=hidden_nf, hidden_coord_nf=hidden_nf,
+                device=device, act_fn=nn.SiLU(), n_layers=4,sin_embedding=sin_embedding,
+                coords_weight=1.0,attention=False, node_attr=1,
+                num_vectors=3, update_coords=True)
         elif mode == 'gnn_dynamics':
             self.gnn = GNN(
                 in_node_nf=in_node_nf + context_node_nf + 3, in_edge_nf=0,
