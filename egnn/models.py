@@ -23,7 +23,7 @@ class EGNN_dynamics_QM9(nn.Module):
                 aggregation_method=aggregation_method)
             self.in_node_nf = in_node_nf
         elif mode == 'mc_egnn_dynamics':
-            self.egnn = MC_EGNN(in_node_nf=in_node_nf + context_node_nf, in_edge_nf=1, hidden_edge_nf=hidden_nf, hidden_node_nf=hidden_nf, hidden_coord_nf=hidden_nf,
+            self.mc_egnn = MC_EGNN(in_node_nf=in_node_nf + context_node_nf, in_edge_nf=1, hidden_edge_nf=hidden_nf, hidden_node_nf=hidden_nf, hidden_coord_nf=hidden_nf,
                 device=device, act_fn=nn.SiLU(), n_layers=4,sin_embedding=sin_embedding,
                 coords_weight=1.0,attention=False, node_attr=1,
                 num_vectors=3, update_coords=True)
@@ -79,9 +79,11 @@ class EGNN_dynamics_QM9(nn.Module):
             # We're conditioning, awesome!
             context = context.view(bs*n_nodes, self.context_node_nf)
             h = torch.cat([h, context], dim=1)
-
         if self.mode == 'egnn_dynamics':
             h_final, x_final = self.egnn(h, x, edges, node_mask=node_mask, edge_mask=edge_mask)
+            vel = (x_final - x) * node_mask  # This masking operation is redundant but just in case
+        elif self.mode == 'mc_egnn_dynamics':
+            h_final, x_final = self.mc_egnn(h, x, edges, node_mask=node_mask, edge_mask=edge_mask, n_nodes=None)
             vel = (x_final - x) * node_mask  # This masking operation is redundant but just in case
         elif self.mode == 'gnn_dynamics':
             xh = torch.cat([x, h], dim=1)
