@@ -377,7 +377,7 @@ class E_GCL_mask(E_GCL):
         return h, coord, edge_attr
 
 
-class EGNN(nn.Module):
+class MC_EGNN(nn.Module):
     def __init__(self, in_node_nf, in_edge_nf, hidden_edge_nf, hidden_node_nf, hidden_coord_nf,
                 device='cpu', act_fn=nn.SiLU(), n_layers=4,sin_embedding=False,
                 coords_weight=1.0,attention=False, node_attr=1,
@@ -492,22 +492,4 @@ def get_edges_batch(n_nodes, batch_size):
             cols.append(edges[1] + n_nodes * i)
         edges = [torch.cat(rows), torch.cat(cols)]
     return edges, edge_attr
-
-batch_size = 8
-n_nodes = 4
-n_feat = 1
-x_dim = 3
-
-# Dummy variables h, x and fully connected edges
-h = torch.ones(batch_size *  n_nodes, n_feat)
-x = torch.ones(batch_size * n_nodes, x_dim)
-edges, edge_attr = get_edges_batch(n_nodes, batch_size)
-
-# Initialize EGNN
-egnn = EGNN(in_node_nf=n_feat, in_edge_nf=1, hidden_edge_nf=n_feat, hidden_node_nf=n_feat, hidden_coord_nf=n_feat, num_vectors=3, sin_embedding=True)
-
-# Run EGNN
-h, x = egnn(h, x, edges, edge_attr, n_nodes=n_nodes)
-
-x
 
